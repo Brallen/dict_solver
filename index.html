@@ -6,8 +6,14 @@
 
     <title>🚧 dict_solver</title>
 
-    <link rel="stylesheet" href="/priv/static/styles.css" />
-    <script type="module" src="/priv/static/dict_solver.mjs"></script>
+    <!-- This lets us prefix with the base when we're on github but locally still function -->
+    <script>
+      const isLocal = location.hostname === "localhost";
+      document.write(`<base href="${isLocal ? "/" : "/dict_solver/"}">`);
+    </script>
+
+    <link rel="stylesheet" href="priv/static/styles.css" />
+    <script type="module" src="priv/static/dict_solver.mjs"></script>
   </head>
 
   <body>
