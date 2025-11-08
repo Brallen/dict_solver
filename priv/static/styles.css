@@ -28,7 +28,7 @@ input {
 }
 
 .word_input,
-.unused_letters_input {
+.invalid_letters_input {
   border-style: solid;
   border-color: black;
   padding: 8px;

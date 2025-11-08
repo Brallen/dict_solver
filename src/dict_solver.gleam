@@ -47,14 +47,14 @@ type Model {
     bank: List(String),
     options: List(String),
     word_letters: String,
-    unused_letters: List(String),
+    invalid_letters: List(String),
   )
 }
 
 type Msg {
   ApiReturnedCSV(Result(List(String), rsvp.Error))
   WordInput(value: String)
-  UnusedLettersInput(value: String)
+  InvalidLettersInput(value: String)
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
@@ -65,16 +65,16 @@ fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
       Model(
         ..model,
         word_letters: value,
-        options: utils.get_options(value, model.bank, model.unused_letters),
+        options: utils.get_options(value, model.bank, model.invalid_letters),
       ),
       effect.none(),
     )
-    UnusedLettersInput(value) -> {
+    InvalidLettersInput(value) -> {
       let letters = utils.get_list_of_chars_from_string(value, [])
       #(
         Model(
           ..model,
-          unused_letters: letters,
+          invalid_letters: letters,
           options: utils.get_options(model.word_letters, model.bank, letters),
         ),
         effect.none(),
@@ -95,11 +95,13 @@ fn view(model: Model) -> Element(Msg) {
         ]),
       ]),
       div([attribute.class("input_wrapper")], [
-        label([attribute.for("unused_letters_input")], [text("Unused Letters")]),
+        label([attribute.for("invalid_letters_input")], [
+          text("Invalid Letters"),
+        ]),
         input([
-          attribute.name("unused_letters_input"),
-          attribute.class("unused_letters_input"),
-          on_input(fn(value) { UnusedLettersInput(value) }),
+          attribute.name("invalid_letters_input"),
+          attribute.class("invalid_letters_input"),
+          on_input(fn(value) { InvalidLettersInput(value) }),
         ]),
       ]),
     ]),
