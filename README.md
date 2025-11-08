@@ -1,24 +1,14 @@
 # dict_solver
 
-[![Package Version](https://img.shields.io/hexpm/v/dict_solver)](https://hex.pm/packages/dict_solver)
-[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/dict_solver/)
+This repo is for a basic wordle solver for learning Gleam and Lustre to build websites.
 
-```sh
-gleam add dict_solver@1
-```
-```gleam
-import dict_solver
+You need 5 characters before it shows any results.
 
-pub fn main() -> Nil {
-  // TODO: An example of the project in use
-}
-```
+`-` are wildcards for when you don't know the letter. A letter in a slot means that letter is green in that position.
+The Invalid Letters input is for letters that are black (aka not in the solution).
 
-Further documentation can be found at <https://hexdocs.pm/dict_solver>.
+Examples for Wordle Letters input:
+`___a_`: I only know that there is an 'a' in the second to last position
+`sho_t`: I don't know the letter in the second to last position but the rest are green.
 
-## Development
-
-```sh
-gleam run   # Run the project
-gleam test  # Run the tests
-```
+This does not deal with yellow letters.
