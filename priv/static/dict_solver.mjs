@@ -2570,6 +2570,9 @@ var always_kind = 2;
 function attribute2(name, value) {
   return attribute(name, value);
 }
+function class$(name) {
+  return attribute2("class", name);
+}
 
 // build/dev/javascript/lustre/lustre/effect.mjs
 var Effect = class extends CustomType {
@@ -6436,6 +6439,106 @@ function get4(url, handler) {
   }
 }
 
+// build/dev/javascript/dict_solver/dict_solver/utils.mjs
+function get_first_five_chars_from_string(value) {
+  return try$(
+    pop_grapheme(value),
+    (_use0) => {
+      let a;
+      let a_rest;
+      a = _use0[0];
+      a_rest = _use0[1];
+      return try$(
+        pop_grapheme(a_rest),
+        (_use02) => {
+          let b;
+          let b_rest;
+          b = _use02[0];
+          b_rest = _use02[1];
+          return try$(
+            pop_grapheme(b_rest),
+            (_use03) => {
+              let c;
+              let c_rest;
+              c = _use03[0];
+              c_rest = _use03[1];
+              return try$(
+                pop_grapheme(c_rest),
+                (_use04) => {
+                  let d;
+                  let d_rest;
+                  d = _use04[0];
+                  d_rest = _use04[1];
+                  return try$(
+                    pop_grapheme(d_rest),
+                    (_use05) => {
+                      let e;
+                      e = _use05[0];
+                      return new Ok([a, b, c, d, e]);
+                    }
+                  );
+                }
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+}
+function is_same_or_underscore(possible_underscore_char, char_2) {
+  if (possible_underscore_char === "_") {
+    return true;
+  } else {
+    let char = possible_underscore_char;
+    return char === char_2;
+  }
+}
+function get_options_from_chars(chars, bank) {
+  let a;
+  let b;
+  let c;
+  let d;
+  let e;
+  a = chars[0];
+  b = chars[1];
+  c = chars[2];
+  d = chars[3];
+  e = chars[4];
+  return filter(
+    bank,
+    (bank_word) => {
+      let bank_chars = get_first_five_chars_from_string(bank_word);
+      if (bank_chars instanceof Ok) {
+        let bank_a = bank_chars[0][0];
+        let bank_b = bank_chars[0][1];
+        let bank_c = bank_chars[0][2];
+        let bank_d = bank_chars[0][3];
+        let bank_e = bank_chars[0][4];
+        return is_same_or_underscore(a, bank_a) && is_same_or_underscore(
+          b,
+          bank_b
+        ) && is_same_or_underscore(c, bank_c) && is_same_or_underscore(
+          d,
+          bank_d
+        ) && is_same_or_underscore(e, bank_e);
+      } else {
+        return false;
+      }
+    }
+  );
+}
+function get_options(value, bank) {
+  let lower = lowercase(value);
+  let r_chars = get_first_five_chars_from_string(lower);
+  if (r_chars instanceof Ok) {
+    let chars = r_chars[0];
+    return get_options_from_chars(chars, bank);
+  } else {
+    return toList([]);
+  }
+}
+
 // build/dev/javascript/dict_solver/dict_solver.mjs
 var FILEPATH = "src/dict_solver.gleam";
 var Model = class extends CustomType {
@@ -6481,62 +6584,6 @@ function init(_) {
   let effect = fetch_csv();
   return [model, effect];
 }
-function get_options(value, bank) {
-  let r_chars = try$(
-    pop_grapheme(value),
-    (_use0) => {
-      let a;
-      let a_rest;
-      a = _use0[0];
-      a_rest = _use0[1];
-      return try$(
-        pop_grapheme(a_rest),
-        (_use02) => {
-          let b;
-          let b_rest;
-          b = _use02[0];
-          b_rest = _use02[1];
-          return try$(
-            pop_grapheme(b_rest),
-            (_use03) => {
-              let c;
-              let c_rest;
-              c = _use03[0];
-              c_rest = _use03[1];
-              return try$(
-                pop_grapheme(c_rest),
-                (_use04) => {
-                  let d;
-                  let d_rest;
-                  d = _use04[0];
-                  d_rest = _use04[1];
-                  return try$(
-                    pop_grapheme(d_rest),
-                    (_use05) => {
-                      let e;
-                      e = _use05[0];
-                      return new Ok([a, b, c, d, e]);
-                    }
-                  );
-                }
-              );
-            }
-          );
-        }
-      );
-    }
-  );
-  if (r_chars instanceof Ok) {
-    let a = r_chars[0][0];
-    let b = r_chars[0][1];
-    let c = r_chars[0][2];
-    let d = r_chars[0][3];
-    let e = r_chars[0][4];
-    return toList([a, b, c, d, e]);
-  } else {
-    return toList([]);
-  }
-}
 function update2(model, msg) {
   if (msg instanceof ApiReturnedCSV) {
     let $ = msg[0];
@@ -6556,13 +6603,18 @@ function update2(model, msg) {
 }
 function view(model) {
   return div(
-    toList([]),
+    toList([class$("wrapper")]),
     toList([
-      input(toList([on_input((value) => {
-        return new UserInput(value);
-      })])),
+      input(
+        toList([
+          class$("word_input"),
+          on_input((value) => {
+            return new UserInput(value);
+          })
+        ])
+      ),
       div(
-        toList([]),
+        toList([class$("answer_wrapper")]),
         map(
           model.options,
           (option) => {
@@ -6581,10 +6633,10 @@ function main() {
       "let_assert",
       FILEPATH,
       "dict_solver",
-      16,
+      15,
       "main",
       "Pattern match failed, no pattern matched the value.",
-      { value: $, start: 339, end: 388, pattern_start: 350, pattern_end: 355 }
+      { value: $, start: 346, end: 395, pattern_start: 357, pattern_end: 362 }
     );
   }
   return void 0;
