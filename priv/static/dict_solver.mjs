@@ -2,7 +2,7 @@
 var CustomType = class {
   withFields(fields) {
     let properties = Object.keys(this).map(
-      (label) => label in fields ? fields[label] : this[label]
+      (label2) => label2 in fields ? fields[label2] : this[label2]
     );
     return new this.constructor(...properties);
   }
@@ -258,14 +258,14 @@ function bitArrayByteAt(buffer, bitOffset, index5) {
   }
 }
 var isBitArrayDeprecationMessagePrinted = {};
-function bitArrayPrintDeprecationWarning(name, message2) {
-  if (isBitArrayDeprecationMessagePrinted[name]) {
+function bitArrayPrintDeprecationWarning(name2, message2) {
+  if (isBitArrayDeprecationMessagePrinted[name2]) {
     return;
   }
   console.warn(
-    `Deprecated BitArray.${name} property used in JavaScript FFI code. ${message2}.`
+    `Deprecated BitArray.${name2} property used in JavaScript FFI code. ${message2}.`
   );
-  isBitArrayDeprecationMessagePrinted[name] = true;
+  isBitArrayDeprecationMessagePrinted[name2] = true;
 }
 var Result = class _Result extends CustomType {
   // @internal
@@ -1210,7 +1210,7 @@ function one_of(first, alternatives) {
     }
   );
 }
-function run_dynamic_function(data, name, f) {
+function run_dynamic_function(data, name2, f) {
   let $ = f(data);
   if ($ instanceof Ok) {
     let data$1 = $[0];
@@ -1219,7 +1219,7 @@ function run_dynamic_function(data, name, f) {
     let zero = $[0];
     return [
       zero,
-      toList([new DecodeError(name, classify_dynamic(data), toList([]))])
+      toList([new DecodeError(name2, classify_dynamic(data), toList([]))])
     ];
   }
 }
@@ -1377,6 +1377,9 @@ function lowercase(string5) {
 }
 function string_codeunit_slice(str, from2, length4) {
   return str.slice(from2, from2 + length4);
+}
+function contains_string(haystack, needle) {
+  return haystack.indexOf(needle) >= 0;
 }
 function starts_with(haystack, needle) {
   return haystack.startsWith(needle);
@@ -1597,6 +1600,25 @@ function find_map(loop$list, loop$fun) {
       } else {
         loop$list = rest$1;
         loop$fun = fun;
+      }
+    }
+  }
+}
+function any(loop$list, loop$predicate) {
+  while (true) {
+    let list4 = loop$list;
+    let predicate = loop$predicate;
+    if (list4 instanceof Empty) {
+      return false;
+    } else {
+      let first$1 = list4.head;
+      let rest$1 = list4.tail;
+      let $ = predicate(first$1);
+      if ($) {
+        return $;
+      } else {
+        loop$list = rest$1;
+        loop$predicate = predicate;
       }
     }
   }
@@ -2375,26 +2397,26 @@ function compare4(a, b) {
 
 // build/dev/javascript/lustre/lustre/vdom/vattr.mjs
 var Attribute = class extends CustomType {
-  constructor(kind, name, value) {
+  constructor(kind, name2, value) {
     super();
     this.kind = kind;
-    this.name = name;
+    this.name = name2;
     this.value = value;
   }
 };
 var Property = class extends CustomType {
-  constructor(kind, name, value) {
+  constructor(kind, name2, value) {
     super();
     this.kind = kind;
-    this.name = name;
+    this.name = name2;
     this.value = value;
   }
 };
 var Event2 = class extends CustomType {
-  constructor(kind, name, handler, include, prevent_default, stop_propagation, immediate, debounce, throttle) {
+  constructor(kind, name2, handler, include, prevent_default, stop_propagation, immediate, debounce, throttle) {
     super();
     this.kind = kind;
-    this.name = name;
+    this.name = name2;
     this.handler = handler;
     this.include = include;
     this.prevent_default = prevent_default;
@@ -2544,15 +2566,15 @@ function prepare(attributes) {
   }
 }
 var attribute_kind = 0;
-function attribute(name, value) {
-  return new Attribute(attribute_kind, name, value);
+function attribute(name2, value) {
+  return new Attribute(attribute_kind, name2, value);
 }
 var property_kind = 1;
 var event_kind = 2;
-function event(name, handler, include, prevent_default, stop_propagation, immediate, debounce, throttle) {
+function event(name2, handler, include, prevent_default, stop_propagation, immediate, debounce, throttle) {
   return new Event2(
     event_kind,
-    name,
+    name2,
     handler,
     include,
     prevent_default,
@@ -2567,11 +2589,17 @@ var never = /* @__PURE__ */ new Never(never_kind);
 var always_kind = 2;
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
-function attribute2(name, value) {
-  return attribute(name, value);
+function attribute2(name2, value) {
+  return attribute(name2, value);
 }
-function class$(name) {
-  return attribute2("class", name);
+function class$(name2) {
+  return attribute2("class", name2);
+}
+function for$(id) {
+  return attribute2("for", id);
+}
+function name(element_name) {
+  return attribute2("name", element_name);
 }
 
 // build/dev/javascript/lustre/lustre/effect.mjs
@@ -2934,11 +2962,11 @@ function tick(events) {
     empty_list
   );
 }
-function do_remove_event(handlers, path, name) {
-  return remove(handlers, event2(path, name));
+function do_remove_event(handlers, path, name2) {
+  return remove(handlers, event2(path, name2));
 }
-function remove_event(events, path, name) {
-  let handlers = do_remove_event(events.handlers, path, name);
+function remove_event(events, path, name2) {
+  let handlers = do_remove_event(events.handlers, path, name2);
   return new Events(
     handlers,
     events.dispatched_paths,
@@ -2951,15 +2979,15 @@ function remove_attributes(handlers, path, attributes) {
     handlers,
     (events, attribute3) => {
       if (attribute3 instanceof Event2) {
-        let name = attribute3.name;
-        return do_remove_event(events, path, name);
+        let name2 = attribute3.name;
+        return do_remove_event(events, path, name2);
       } else {
         return events;
       }
     }
   );
 }
-function handle(events, path, name, event4) {
+function handle(events, path, name2, event4) {
   let next_dispatched_paths = prepend(path, events.next_dispatched_paths);
   let events$1 = new Events(
     events.handlers,
@@ -2968,7 +2996,7 @@ function handle(events, path, name, event4) {
   );
   let $ = get3(
     events$1.handlers,
-    path + separator_event + name
+    path + separator_event + name2
   );
   if ($ instanceof Ok) {
     let handler = $[0];
@@ -2980,10 +3008,10 @@ function handle(events, path, name, event4) {
 function has_dispatched_events(events, path) {
   return matches(path, events.dispatched_paths);
 }
-function do_add_event(handlers, mapper, path, name, handler) {
+function do_add_event(handlers, mapper, path, name2, handler) {
   return insert3(
     handlers,
-    event2(path, name),
+    event2(path, name2),
     map2(
       handler,
       (handler2) => {
@@ -2996,8 +3024,8 @@ function do_add_event(handlers, mapper, path, name, handler) {
     )
   );
 }
-function add_event(events, mapper, path, name, handler) {
-  let handlers = do_add_event(events.handlers, mapper, path, name, handler);
+function add_event(events, mapper, path, name2, handler) {
+  let handlers = do_add_event(events.handlers, mapper, path, name2, handler);
   return new Events(
     handlers,
     events.dispatched_paths,
@@ -3010,9 +3038,9 @@ function add_attributes(handlers, mapper, path, attributes) {
     handlers,
     (events, attribute3) => {
       if (attribute3 instanceof Event2) {
-        let name = attribute3.name;
+        let name2 = attribute3.name;
         let handler = attribute3.handler;
-        return do_add_event(events, mapper, path, name, handler);
+        return do_add_event(events, mapper, path, name2, handler);
       } else {
         return events;
       }
@@ -3179,6 +3207,9 @@ function p(attrs, children) {
 function input(attrs) {
   return element2("input", attrs, empty_list);
 }
+function label(attrs, children) {
+  return element2("label", attrs, children);
+}
 
 // build/dev/javascript/lustre/lustre/vdom/patch.mjs
 var Patch = class extends CustomType {
@@ -3320,9 +3351,9 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
         if ($ instanceof Event2) {
           let prev = $;
           let old$1 = old.tail;
-          let name = $.name;
+          let name2 = $.name;
           let removed$1 = prepend(prev, removed);
-          let events$1 = remove_event(events, path, name);
+          let events$1 = remove_event(events, path, name2);
           loop$controlled = controlled;
           loop$path = path;
           loop$mapper = mapper;
@@ -3350,10 +3381,10 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
       if ($ instanceof Event2) {
         let next = $;
         let new$1 = new$9.tail;
-        let name = $.name;
+        let name2 = $.name;
         let handler = $.handler;
         let added$1 = prepend(next, added);
-        let events$1 = add_event(events, mapper, path, name, handler);
+        let events$1 = add_event(events, mapper, path, name2, handler);
         loop$controlled = controlled;
         loop$path = path;
         loop$mapper = mapper;
@@ -3383,9 +3414,9 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
       let $ = compare4(prev, next);
       if ($ instanceof Lt) {
         if (prev instanceof Event2) {
-          let name = prev.name;
+          let name2 = prev.name;
           let removed$1 = prepend(prev, removed);
-          let events$1 = remove_event(events, path, name);
+          let events$1 = remove_event(events, path, name2);
           loop$controlled = controlled;
           loop$path = path;
           loop$mapper = mapper;
@@ -3436,10 +3467,10 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
             loop$added = added$1;
             loop$removed = removed;
           } else if (prev instanceof Event2) {
-            let name = prev.name;
+            let name2 = prev.name;
             let added$1 = prepend(next, added);
             let removed$1 = prepend(prev, removed);
-            let events$1 = remove_event(events, path, name);
+            let events$1 = remove_event(events, path, name2);
             loop$controlled = controlled;
             loop$path = path;
             loop$mapper = mapper;
@@ -3503,10 +3534,10 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
             loop$added = added$1;
             loop$removed = removed;
           } else if (prev instanceof Event2) {
-            let name = prev.name;
+            let name2 = prev.name;
             let added$1 = prepend(next, added);
             let removed$1 = prepend(prev, removed);
-            let events$1 = remove_event(events, path, name);
+            let events$1 = remove_event(events, path, name2);
             loop$controlled = controlled;
             loop$path = path;
             loop$mapper = mapper;
@@ -3528,7 +3559,7 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
             loop$removed = removed$1;
           }
         } else if (prev instanceof Event2) {
-          let name = next.name;
+          let name2 = next.name;
           let handler = next.handler;
           let has_changes = prev.prevent_default.kind !== next.prevent_default.kind || prev.stop_propagation.kind !== next.stop_propagation.kind || prev.immediate !== next.immediate || prev.debounce !== next.debounce || prev.throttle !== next.throttle;
           let _block;
@@ -3538,7 +3569,7 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
             _block = added;
           }
           let added$1 = _block;
-          let events$1 = add_event(events, mapper, path, name, handler);
+          let events$1 = add_event(events, mapper, path, name2, handler);
           loop$controlled = controlled;
           loop$path = path;
           loop$mapper = mapper;
@@ -3548,11 +3579,11 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
           loop$added = added$1;
           loop$removed = removed;
         } else {
-          let name = next.name;
+          let name2 = next.name;
           let handler = next.handler;
           let added$1 = prepend(next, added);
           let removed$1 = prepend(prev, removed);
-          let events$1 = add_event(events, mapper, path, name, handler);
+          let events$1 = add_event(events, mapper, path, name2, handler);
           loop$controlled = controlled;
           loop$path = path;
           loop$mapper = mapper;
@@ -3563,10 +3594,10 @@ function diff_attributes(loop$controlled, loop$path, loop$mapper, loop$events, l
           loop$removed = removed$1;
         }
       } else if (next instanceof Event2) {
-        let name = next.name;
+        let name2 = next.name;
         let handler = next.handler;
         let added$1 = prepend(next, added);
-        let events$1 = add_event(events, mapper, path, name, handler);
+        let events$1 = add_event(events, mapper, path, name2, handler);
         loop$controlled = controlled;
         loop$path = path;
         loop$mapper = mapper;
@@ -4226,17 +4257,17 @@ function diff(events, old, new$9) {
 // build/dev/javascript/lustre/lustre/vdom/reconciler.ffi.mjs
 var setTimeout = globalThis.setTimeout;
 var clearTimeout = globalThis.clearTimeout;
-var createElementNS = (ns, name) => document().createElementNS(ns, name);
+var createElementNS = (ns, name2) => document().createElementNS(ns, name2);
 var createTextNode = (data) => document().createTextNode(data);
 var createDocumentFragment = () => document().createDocumentFragment();
 var insertBefore = (parent, node, reference) => parent.insertBefore(node, reference);
 var moveBefore = SUPPORTS_MOVE_BEFORE ? (parent, node, reference) => parent.moveBefore(node, reference) : insertBefore;
 var removeChild = (parent, child) => parent.removeChild(child);
-var getAttribute = (node, name) => node.getAttribute(name);
-var setAttribute = (node, name, value) => node.setAttribute(name, value);
-var removeAttribute = (node, name) => node.removeAttribute(name);
-var addEventListener = (node, name, handler, options) => node.addEventListener(name, handler, options);
-var removeEventListener = (node, name, handler) => node.removeEventListener(name, handler);
+var getAttribute = (node, name2) => node.getAttribute(name2);
+var setAttribute = (node, name2, value) => node.setAttribute(name2, value);
+var removeAttribute = (node, name2) => node.removeAttribute(name2);
+var addEventListener = (node, name2, handler, options) => node.addEventListener(name2, handler, options);
+var removeEventListener = (node, name2, handler) => node.removeEventListener(name2, handler);
 var setInnerHtml = (node, innerHtml) => node.innerHTML = innerHtml;
 var setData = (node, data) => node.data = data;
 var meta = Symbol("lustre");
@@ -4418,14 +4449,14 @@ var Reconciler = class {
     iterate(children, (child) => this.#removeDebouncers(child));
   }
   #update({ node, handlers, throttles, debouncers }, { added, removed }) {
-    iterate(removed, ({ name }) => {
-      if (handlers.delete(name)) {
-        removeEventListener(node, name, handleEvent);
-        this.#updateDebounceThrottle(throttles, name, 0);
-        this.#updateDebounceThrottle(debouncers, name, 0);
+    iterate(removed, ({ name: name2 }) => {
+      if (handlers.delete(name2)) {
+        removeEventListener(node, name2, handleEvent);
+        this.#updateDebounceThrottle(throttles, name2, 0);
+        this.#updateDebounceThrottle(debouncers, name2, 0);
       } else {
-        removeAttribute(node, name);
-        SYNCED_ATTRIBUTES[name]?.removed?.(node, name);
+        removeAttribute(node, name2);
+        SYNCED_ATTRIBUTES[name2]?.removed?.(node, name2);
       }
     });
     iterate(added, (attribute3) => this.#createAttribute(node, attribute3));
@@ -4494,7 +4525,7 @@ var Reconciler = class {
     const { debouncers, handlers, throttles } = node[meta];
     const {
       kind,
-      name,
+      name: name2,
       value,
       prevent_default: prevent,
       debounce: debounceDelay,
@@ -4503,46 +4534,46 @@ var Reconciler = class {
     switch (kind) {
       case attribute_kind: {
         const valueOrDefault = value ?? "";
-        if (name === "virtual:defaultValue") {
+        if (name2 === "virtual:defaultValue") {
           node.defaultValue = valueOrDefault;
           return;
         }
-        if (valueOrDefault !== getAttribute(node, name)) {
-          setAttribute(node, name, valueOrDefault);
+        if (valueOrDefault !== getAttribute(node, name2)) {
+          setAttribute(node, name2, valueOrDefault);
         }
-        SYNCED_ATTRIBUTES[name]?.added?.(node, valueOrDefault);
+        SYNCED_ATTRIBUTES[name2]?.added?.(node, valueOrDefault);
         break;
       }
       case property_kind:
-        node[name] = value;
+        node[name2] = value;
         break;
       case event_kind: {
-        if (handlers.has(name)) {
-          removeEventListener(node, name, handleEvent);
+        if (handlers.has(name2)) {
+          removeEventListener(node, name2, handleEvent);
         }
         const passive = prevent.kind === never_kind;
-        addEventListener(node, name, handleEvent, { passive });
-        this.#updateDebounceThrottle(throttles, name, throttleDelay);
-        this.#updateDebounceThrottle(debouncers, name, debounceDelay);
-        handlers.set(name, (event4) => this.#handleEvent(attribute3, event4));
+        addEventListener(node, name2, handleEvent, { passive });
+        this.#updateDebounceThrottle(throttles, name2, throttleDelay);
+        this.#updateDebounceThrottle(debouncers, name2, debounceDelay);
+        handlers.set(name2, (event4) => this.#handleEvent(attribute3, event4));
         break;
       }
     }
   }
-  #updateDebounceThrottle(map6, name, delay) {
-    const debounceOrThrottle = map6.get(name);
+  #updateDebounceThrottle(map6, name2, delay) {
+    const debounceOrThrottle = map6.get(name2);
     if (delay > 0) {
       if (debounceOrThrottle) {
         debounceOrThrottle.delay = delay;
       } else {
-        map6.set(name, { delay });
+        map6.set(name2, { delay });
       }
     } else if (debounceOrThrottle) {
       const { timeout } = debounceOrThrottle;
       if (timeout) {
         clearTimeout(timeout);
       }
-      map6.delete(name);
+      map6.delete(name2);
     }
   }
   #handleEvent(attribute3, event4) {
@@ -4624,20 +4655,20 @@ var createServerEvent = (event4, include = []) => {
   }
   return data;
 };
-var syncedBooleanAttribute = /* @__NO_SIDE_EFFECTS__ */ (name) => {
+var syncedBooleanAttribute = /* @__NO_SIDE_EFFECTS__ */ (name2) => {
   return {
     added(node) {
-      node[name] = true;
+      node[name2] = true;
     },
     removed(node) {
-      node[name] = false;
+      node[name2] = false;
     }
   };
 };
-var syncedAttribute = /* @__NO_SIDE_EFFECTS__ */ (name) => {
+var syncedAttribute = /* @__NO_SIDE_EFFECTS__ */ (name2) => {
   return {
     added(node, value) {
-      node[name] = value;
+      node[name2] = value;
     }
   };
 };
@@ -4859,9 +4890,9 @@ var virtualiseAttributes = (node) => {
   return attributes;
 };
 var virtualiseAttribute = (attr) => {
-  const name = attr.localName;
+  const name2 = attr.localName;
   const value = attr.value;
-  return attribute2(name, value);
+  return attribute2(name2, value);
 };
 
 // build/dev/javascript/lustre/lustre/runtime/client/runtime.ffi.mjs
@@ -4889,8 +4920,8 @@ var Runtime = class {
         event4.callback(context.value);
       }
     });
-    this.#reconciler = new Reconciler(this.root, (event4, path, name) => {
-      const [events, result] = handle(this.#events, path, name, event4);
+    this.#reconciler = new Reconciler(this.root, (event4, path, name2) => {
+      const [events, result] = handle(this.#events, path, name2, event4);
       this.#events = events;
       if (result.isOk()) {
         const handler = result[0];
@@ -5043,9 +5074,9 @@ var EffectDispatchedMessage = class extends CustomType {
   }
 };
 var EffectEmitEvent = class extends CustomType {
-  constructor(name, data) {
+  constructor(name2, data) {
     super();
-    this.name = name;
+    this.name = name2;
     this.data = data;
   }
 };
@@ -5156,35 +5187,35 @@ function start3(app, selector, start_args) {
 }
 
 // build/dev/javascript/lustre/lustre/event.mjs
-function is_immediate_event(name) {
-  if (name === "input") {
+function is_immediate_event(name2) {
+  if (name2 === "input") {
     return true;
-  } else if (name === "change") {
+  } else if (name2 === "change") {
     return true;
-  } else if (name === "focus") {
+  } else if (name2 === "focus") {
     return true;
-  } else if (name === "focusin") {
+  } else if (name2 === "focusin") {
     return true;
-  } else if (name === "focusout") {
+  } else if (name2 === "focusout") {
     return true;
-  } else if (name === "blur") {
+  } else if (name2 === "blur") {
     return true;
-  } else if (name === "select") {
+  } else if (name2 === "select") {
     return true;
   } else {
     return false;
   }
 }
-function on(name, handler) {
+function on(name2, handler) {
   return event(
-    name,
+    name2,
     map2(handler, (msg) => {
       return new Handler(false, false, msg);
     }),
     empty_list,
     never,
     never,
-    is_immediate_event(name),
+    is_immediate_event(name2),
     0,
     0
   );
@@ -6486,6 +6517,21 @@ function get_first_five_chars_from_string(value) {
     }
   );
 }
+function get_list_of_chars_from_string(loop$value, loop$list) {
+  while (true) {
+    let value = loop$value;
+    let list4 = loop$list;
+    let r_res = pop_grapheme(value);
+    if (r_res instanceof Ok) {
+      let char = r_res[0][0];
+      let rest = r_res[0][1];
+      loop$value = rest;
+      loop$list = prepend(char, list4);
+    } else {
+      return list4;
+    }
+  }
+}
 function is_same_or_underscore(possible_underscore_char, char_2) {
   if (possible_underscore_char === "_") {
     return true;
@@ -6494,7 +6540,7 @@ function is_same_or_underscore(possible_underscore_char, char_2) {
     return char === char_2;
   }
 }
-function get_options_from_chars(chars, bank) {
+function get_options_from_chars(chars, bank, unused_letters) {
   let a;
   let b;
   let c;
@@ -6521,19 +6567,24 @@ function get_options_from_chars(chars, bank) {
         ) && is_same_or_underscore(c, bank_c) && is_same_or_underscore(
           d,
           bank_d
-        ) && is_same_or_underscore(e, bank_e);
+        ) && is_same_or_underscore(e, bank_e) && !any(
+          unused_letters,
+          (letter) => {
+            return contains_string(bank_word, letter);
+          }
+        );
       } else {
         return false;
       }
     }
   );
 }
-function get_options(value, bank) {
-  let lower = lowercase(value);
+function get_options(word_letters, bank, unused_letters) {
+  let lower = lowercase(word_letters);
   let r_chars = get_first_five_chars_from_string(lower);
   if (r_chars instanceof Ok) {
     let chars = r_chars[0];
-    return get_options_from_chars(chars, bank);
+    return get_options_from_chars(chars, bank, unused_letters);
   } else {
     return toList([]);
   }
@@ -6542,10 +6593,12 @@ function get_options(value, bank) {
 // build/dev/javascript/dict_solver/dict_solver.mjs
 var FILEPATH = "src/dict_solver.gleam";
 var Model = class extends CustomType {
-  constructor(bank, options) {
+  constructor(bank, options, word_letters, unused_letters) {
     super();
     this.bank = bank;
     this.options = options;
+    this.word_letters = word_letters;
+    this.unused_letters = unused_letters;
   }
 };
 var ApiReturnedCSV = class extends CustomType {
@@ -6554,7 +6607,13 @@ var ApiReturnedCSV = class extends CustomType {
     this[0] = $0;
   }
 };
-var UserInput = class extends CustomType {
+var WordInput = class extends CustomType {
+  constructor(value) {
+    super();
+    this.value = value;
+  }
+};
+var UnusedLettersInput = class extends CustomType {
   constructor(value) {
     super();
     this.value = value;
@@ -6580,7 +6639,7 @@ function fetch_csv() {
   return get4(url, handler);
 }
 function init(_) {
-  let model = new Model(toList([]), toList([]));
+  let model = new Model(toList([]), toList([]), "", toList([]));
   let effect = fetch_csv();
   return [model, effect];
 }
@@ -6589,14 +6648,47 @@ function update2(model, msg) {
     let $ = msg[0];
     if ($ instanceof Ok) {
       let words = $[0];
-      return [new Model(words, model.options), none()];
+      return [
+        new Model(
+          words,
+          model.options,
+          model.word_letters,
+          model.unused_letters
+        ),
+        none()
+      ];
     } else {
-      return [new Model(toList([]), model.options), none()];
+      return [
+        new Model(
+          toList([]),
+          model.options,
+          model.word_letters,
+          model.unused_letters
+        ),
+        none()
+      ];
     }
-  } else {
+  } else if (msg instanceof WordInput) {
     let value = msg.value;
     return [
-      new Model(model.bank, get_options(value, model.bank)),
+      new Model(
+        model.bank,
+        get_options(value, model.bank, model.unused_letters),
+        value,
+        model.unused_letters
+      ),
+      none()
+    ];
+  } else {
+    let value = msg.value;
+    let letters = get_list_of_chars_from_string(value, toList([]));
+    return [
+      new Model(
+        model.bank,
+        get_options(model.word_letters, model.bank, letters),
+        model.word_letters,
+        letters
+      ),
       none()
     ];
   }
@@ -6605,12 +6697,45 @@ function view(model) {
   return div(
     toList([class$("wrapper")]),
     toList([
-      input(
+      div(
+        toList([class$("inputs")]),
         toList([
-          class$("word_input"),
-          on_input((value) => {
-            return new UserInput(value);
-          })
+          div(
+            toList([class$("input_wrapper")]),
+            toList([
+              label(
+                toList([for$("word_input")]),
+                toList([text2("Wordle Letters")])
+              ),
+              input(
+                toList([
+                  name("word_input"),
+                  class$("word_input"),
+                  on_input((value) => {
+                    return new WordInput(value);
+                  })
+                ])
+              )
+            ])
+          ),
+          div(
+            toList([class$("input_wrapper")]),
+            toList([
+              label(
+                toList([for$("unused_letters_input")]),
+                toList([text2("Unused Letters")])
+              ),
+              input(
+                toList([
+                  name("unused_letters_input"),
+                  class$("unused_letters_input"),
+                  on_input((value) => {
+                    return new UnusedLettersInput(value);
+                  })
+                ])
+              )
+            ])
+          )
         ])
       ),
       div(
@@ -6636,7 +6761,7 @@ function main() {
       15,
       "main",
       "Pattern match failed, no pattern matched the value.",
-      { value: $, start: 346, end: 395, pattern_start: 357, pattern_end: 362 }
+      { value: $, start: 353, end: 402, pattern_start: 364, pattern_end: 369 }
     );
   }
   return void 0;

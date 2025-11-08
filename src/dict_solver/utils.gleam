@@ -2,12 +2,16 @@ import gleam/list
 import gleam/result
 import gleam/string
 
-pub fn get_options(value: String, bank: List(String)) -> List(String) {
-  let lower = string.lowercase(value)
+pub fn get_options(
+  word_letters: String,
+  bank: List(String),
+  unused_letters: List(String),
+) -> List(String) {
+  let lower = string.lowercase(word_letters)
   let r_chars = get_first_five_chars_from_string(lower)
 
   case r_chars {
-    Ok(chars) -> get_options_from_chars(chars, bank)
+    Ok(chars) -> get_options_from_chars(chars, bank, unused_letters)
     Error(_) -> []
   }
 }
@@ -23,9 +27,21 @@ fn get_first_five_chars_from_string(
   Ok(#(a, b, c, d, e))
 }
 
+pub fn get_list_of_chars_from_string(
+  value: String,
+  list: List(String),
+) -> List(String) {
+  let r_res = string.pop_grapheme(value)
+  case r_res {
+    Ok(#(char, rest)) -> get_list_of_chars_from_string(rest, [char, ..list])
+    Error(_) -> list
+  }
+}
+
 fn get_options_from_chars(
   chars: #(String, String, String, String, String),
   bank: List(String),
+  unused_letters: List(String),
 ) -> List(String) {
   let #(a, b, c, d, e) = chars
   list.filter(bank, fn(bank_word) {
@@ -37,6 +53,9 @@ fn get_options_from_chars(
         && is_same_or_underscore(c, bank_c)
         && is_same_or_underscore(d, bank_d)
         && is_same_or_underscore(e, bank_e)
+        && !list.any(unused_letters, fn(letter) {
+          string.contains(bank_word, letter)
+        })
       }
       Error(_) -> False
     }

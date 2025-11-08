@@ -16,7 +16,19 @@ input {
   padding-block: 3rem;
 }
 
-.word_input {
+.inputs {
+  display: flex;
+  gap: 1rem;
+}
+
+.input_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.word_input,
+.unused_letters_input {
   border-style: solid;
   border-color: black;
   padding: 8px;
