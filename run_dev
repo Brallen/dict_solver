@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# I keep forgetting this command so this shell script with handle it for me
+gleam run -m lustre/dev start
