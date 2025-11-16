@@ -1,6 +1,7 @@
 import dict_solver/utils
 import gleam/list
 import gleam/result
+import gleam/string
 import gsv
 import lustre
 import lustre/attribute
@@ -70,7 +71,8 @@ fn update(model: Model, msg: Msg) -> #(Model, Effect(Msg)) {
       effect.none(),
     )
     InvalidLettersInput(value) -> {
-      let letters = utils.get_list_of_chars_from_string(value, [])
+      let letters =
+        utils.get_list_of_chars_from_string(string.lowercase(value), [])
       #(
         Model(
           ..model,

@@ -6687,7 +6687,10 @@ function update2(model, msg) {
     ];
   } else {
     let value = msg.value;
-    let letters = get_list_of_chars_from_string(value, toList([]));
+    let letters = get_list_of_chars_from_string(
+      lowercase(value),
+      toList([])
+    );
     return [
       new Model(
         model.bank,
@@ -6766,10 +6769,10 @@ function main() {
       "let_assert",
       FILEPATH,
       "dict_solver",
-      15,
+      16,
       "main",
       "Pattern match failed, no pattern matched the value.",
-      { value: $, start: 353, end: 402, pattern_start: 364, pattern_end: 369 }
+      { value: $, start: 373, end: 422, pattern_start: 384, pattern_end: 389 }
     );
   }
   return void 0;
