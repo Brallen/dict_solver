@@ -1133,6 +1133,8 @@ var Decoder = class extends CustomType {
     this.function = function$;
   }
 };
+var int2 = /* @__PURE__ */ new Decoder(decode_int);
+var string2 = /* @__PURE__ */ new Decoder(decode_string);
 function run(data, decoder) {
   let $ = decoder.function(data);
   let maybe_invalid_data;
@@ -1219,11 +1221,9 @@ function run_dynamic_function(data, name2, f) {
 function decode_int(data) {
   return run_dynamic_function(data, "Int", int);
 }
-var int2 = /* @__PURE__ */ new Decoder(decode_int);
 function decode_string(data) {
   return run_dynamic_function(data, "String", string);
 }
-var string2 = /* @__PURE__ */ new Decoder(decode_string);
 function push_path(layer, path) {
   let decoder = one_of(
     string2,
@@ -2439,6 +2439,12 @@ var Never = class extends CustomType {
     this.kind = kind;
   }
 };
+var attribute_kind = 0;
+var property_kind = 1;
+var event_kind = 2;
+var never_kind = 0;
+var never = /* @__PURE__ */ new Never(never_kind);
+var always_kind = 2;
 function merge(loop$attributes, loop$merged) {
   while (true) {
     let attributes = loop$attributes;
@@ -2564,12 +2570,9 @@ function prepare(attributes) {
     }
   }
 }
-var attribute_kind = 0;
 function attribute(name2, value) {
   return new Attribute(attribute_kind, name2, value);
 }
-var property_kind = 1;
-var event_kind = 2;
 function event(name2, handler, include, prevent_default, stop_propagation, immediate, debounce, throttle) {
   return new Event2(
     event_kind,
@@ -2583,9 +2586,6 @@ function event(name2, handler, include, prevent_default, stop_propagation, immed
     throttle
   );
 }
-var never_kind = 0;
-var never = /* @__PURE__ */ new Never(never_kind);
-var always_kind = 2;
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
 function attribute2(name2, value) {
@@ -2668,6 +2668,9 @@ var Index = class extends CustomType {
     this.parent = parent;
   }
 };
+var root2 = /* @__PURE__ */ new Root();
+var separator_element = "	";
+var separator_event = "\n";
 function do_matches(loop$path, loop$candidates) {
   while (true) {
     let path = loop$path;
@@ -2694,8 +2697,6 @@ function add2(parent, index5, key) {
     return new Key(key, parent);
   }
 }
-var root2 = /* @__PURE__ */ new Root();
-var separator_element = "	";
 function do_to_string(loop$path, loop$acc) {
   while (true) {
     let path = loop$path;
@@ -2733,7 +2734,6 @@ function matches(path, candidates) {
     return do_matches(to_string2(path), candidates);
   }
 }
-var separator_event = "\n";
 function event2(path, event4) {
   return do_to_string(path, toList([separator_event, event4]));
 }
@@ -2785,6 +2785,10 @@ var UnsafeInnerHtml = class extends CustomType {
     this.inner_html = inner_html;
   }
 };
+var fragment_kind = 0;
+var element_kind = 1;
+var text_kind = 2;
+var unsafe_inner_html_kind = 3;
 function is_void_element(tag, namespace) {
   if (namespace === "") {
     if (tag === "area") {
@@ -2858,11 +2862,9 @@ function to_keyed(key, node) {
     );
   }
 }
-var fragment_kind = 0;
 function fragment(key, mapper, children, keyed_children) {
   return new Fragment(fragment_kind, key, mapper, children, keyed_children);
 }
-var element_kind = 1;
 function element(key, mapper, namespace, tag, attributes, children, keyed_children, self_closing, void$) {
   return new Element(
     element_kind,
@@ -2877,11 +2879,9 @@ function element(key, mapper, namespace, tag, attributes, children, keyed_childr
     void$ || is_void_element(tag, namespace)
   );
 }
-var text_kind = 2;
 function text(key, mapper, content) {
   return new Text(text_kind, key, mapper, content);
 }
-var unsafe_inner_html_kind = 3;
 
 // build/dev/javascript/lustre/lustre/internals/equals.ffi.mjs
 var isReferenceEqual = (a, b) => a === b;
@@ -3273,34 +3273,34 @@ var Insert = class extends CustomType {
     this.before = before;
   }
 };
+var replace_text_kind = 0;
+var replace_inner_html_kind = 1;
+var update_kind = 2;
+var move_kind = 3;
+var remove_kind = 4;
+var replace_kind = 5;
+var insert_kind = 6;
 function new$6(index5, removed, changes, children) {
   return new Patch(index5, removed, changes, children);
 }
-var replace_text_kind = 0;
 function replace_text(content) {
   return new ReplaceText(replace_text_kind, content);
 }
-var replace_inner_html_kind = 1;
 function replace_inner_html(inner_html) {
   return new ReplaceInnerHtml(replace_inner_html_kind, inner_html);
 }
-var update_kind = 2;
 function update(added, removed) {
   return new Update(update_kind, added, removed);
 }
-var move_kind = 3;
 function move(key, before) {
   return new Move(move_kind, key, before);
 }
-var remove_kind = 4;
 function remove2(index5) {
   return new Remove(remove_kind, index5);
 }
-var replace_kind = 5;
 function replace2(index5, with$) {
   return new Replace(replace_kind, index5, with$);
 }
-var insert_kind = 6;
 function insert4(children, before) {
   return new Insert(insert_kind, children, before);
 }
@@ -3817,17 +3817,17 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
         if ($ instanceof Fragment) {
           let $1 = new$9.head;
           if ($1 instanceof Fragment) {
-            let prev$1 = $;
+            let prev2 = $;
             let old$1 = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new$1 = new$9.tail;
-            let composed_mapper = compose_mapper(mapper, next$1.mapper);
-            let child_path = add2(path, node_index, next$1.key);
+            let composed_mapper = compose_mapper(mapper, next2.mapper);
+            let child_path = add2(path, node_index, next2.key);
             let child = do_diff(
-              prev$1.children,
-              prev$1.keyed_children,
-              next$1.children,
-              next$1.keyed_children,
+              prev2.children,
+              prev2.keyed_children,
+              next2.children,
+              next2.keyed_children,
               empty2(),
               0,
               0,
@@ -3873,21 +3873,15 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
             loop$mapper = mapper;
             loop$events = child.events;
           } else {
-            let prev$1 = $;
+            let prev2 = $;
             let old_remaining = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new_remaining = new$9.tail;
-            let change = replace2(node_index - moved_offset, next$1);
+            let change = replace2(node_index - moved_offset, next2);
             let _block;
             let _pipe = events;
-            let _pipe$1 = remove_child(_pipe, path, node_index, prev$1);
-            _block = add_child(
-              _pipe$1,
-              mapper,
-              path,
-              node_index,
-              next$1
-            );
+            let _pipe$1 = remove_child(_pipe, path, node_index, prev2);
+            _block = add_child(_pipe$1, mapper, path, node_index, next2);
             let events$1 = _block;
             loop$old = old_remaining;
             loop$old_keyed = old_keyed;
@@ -3907,20 +3901,17 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
         } else if ($ instanceof Element) {
           let $1 = new$9.head;
           if ($1 instanceof Element) {
-            let prev$1 = $;
-            let next$1 = $1;
-            if (prev$1.namespace === next$1.namespace && prev$1.tag === next$1.tag) {
+            let prev2 = $;
+            let next2 = $1;
+            if (prev2.namespace === next2.namespace && prev2.tag === next2.tag) {
               let old$1 = old.tail;
               let new$1 = new$9.tail;
-              let composed_mapper = compose_mapper(
-                mapper,
-                next$1.mapper
-              );
-              let child_path = add2(path, node_index, next$1.key);
+              let composed_mapper = compose_mapper(mapper, next2.mapper);
+              let child_path = add2(path, node_index, next2.key);
               let controlled = is_controlled(
                 events,
-                next$1.namespace,
-                next$1.tag,
+                next2.namespace,
+                next2.tag,
                 child_path
               );
               let $2 = diff_attributes(
@@ -3928,8 +3919,8 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
                 child_path,
                 composed_mapper,
                 events,
-                prev$1.attributes,
-                next$1.attributes,
+                prev2.attributes,
+                next2.attributes,
                 empty_list,
                 empty_list
               );
@@ -3947,10 +3938,10 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
               }
               let initial_child_changes = _block;
               let child = do_diff(
-                prev$1.children,
-                prev$1.keyed_children,
-                next$1.children,
-                next$1.keyed_children,
+                prev2.children,
+                prev2.keyed_children,
+                next2.children,
+                next2.keyed_children,
                 empty2(),
                 0,
                 0,
@@ -3996,25 +3987,20 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
               loop$mapper = mapper;
               loop$events = child.events;
             } else {
-              let prev$2 = $;
+              let prev3 = $;
               let old_remaining = old.tail;
-              let next$2 = $1;
+              let next3 = $1;
               let new_remaining = new$9.tail;
-              let change = replace2(node_index - moved_offset, next$2);
+              let change = replace2(node_index - moved_offset, next3);
               let _block;
               let _pipe = events;
-              let _pipe$1 = remove_child(
-                _pipe,
-                path,
-                node_index,
-                prev$2
-              );
+              let _pipe$1 = remove_child(_pipe, path, node_index, prev3);
               _block = add_child(
                 _pipe$1,
                 mapper,
                 path,
                 node_index,
-                next$2
+                next3
               );
               let events$1 = _block;
               loop$old = old_remaining;
@@ -4033,21 +4019,15 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
               loop$events = events$1;
             }
           } else {
-            let prev$1 = $;
+            let prev2 = $;
             let old_remaining = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new_remaining = new$9.tail;
-            let change = replace2(node_index - moved_offset, next$1);
+            let change = replace2(node_index - moved_offset, next2);
             let _block;
             let _pipe = events;
-            let _pipe$1 = remove_child(_pipe, path, node_index, prev$1);
-            _block = add_child(
-              _pipe$1,
-              mapper,
-              path,
-              node_index,
-              next$1
-            );
+            let _pipe$1 = remove_child(_pipe, path, node_index, prev2);
+            _block = add_child(_pipe$1, mapper, path, node_index, next2);
             let events$1 = _block;
             loop$old = old_remaining;
             loop$old_keyed = old_keyed;
@@ -4067,9 +4047,9 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
         } else if ($ instanceof Text) {
           let $1 = new$9.head;
           if ($1 instanceof Text) {
-            let prev$1 = $;
-            let next$1 = $1;
-            if (prev$1.content === next$1.content) {
+            let prev2 = $;
+            let next2 = $1;
+            if (prev2.content === next2.content) {
               let old$1 = old.tail;
               let new$1 = new$9.tail;
               loop$old = old$1;
@@ -4088,12 +4068,12 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
               loop$events = events;
             } else {
               let old$1 = old.tail;
-              let next$2 = $1;
+              let next3 = $1;
               let new$1 = new$9.tail;
               let child = new$6(
                 node_index,
                 0,
-                toList([replace_text(next$2.content)]),
+                toList([replace_text(next3.content)]),
                 empty_list
               );
               loop$old = old$1;
@@ -4112,21 +4092,15 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
               loop$events = events;
             }
           } else {
-            let prev$1 = $;
+            let prev2 = $;
             let old_remaining = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new_remaining = new$9.tail;
-            let change = replace2(node_index - moved_offset, next$1);
+            let change = replace2(node_index - moved_offset, next2);
             let _block;
             let _pipe = events;
-            let _pipe$1 = remove_child(_pipe, path, node_index, prev$1);
-            _block = add_child(
-              _pipe$1,
-              mapper,
-              path,
-              node_index,
-              next$1
-            );
+            let _pipe$1 = remove_child(_pipe, path, node_index, prev2);
+            _block = add_child(_pipe$1, mapper, path, node_index, next2);
             let events$1 = _block;
             loop$old = old_remaining;
             loop$old_keyed = old_keyed;
@@ -4146,19 +4120,19 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
         } else {
           let $1 = new$9.head;
           if ($1 instanceof UnsafeInnerHtml) {
-            let prev$1 = $;
+            let prev2 = $;
             let old$1 = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new$1 = new$9.tail;
-            let composed_mapper = compose_mapper(mapper, next$1.mapper);
-            let child_path = add2(path, node_index, next$1.key);
+            let composed_mapper = compose_mapper(mapper, next2.mapper);
+            let child_path = add2(path, node_index, next2.key);
             let $2 = diff_attributes(
               false,
               child_path,
               composed_mapper,
               events,
-              prev$1.attributes,
-              next$1.attributes,
+              prev2.attributes,
+              next2.attributes,
               empty_list,
               empty_list
             );
@@ -4176,12 +4150,12 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
             }
             let child_changes = _block;
             let _block$1;
-            let $3 = prev$1.inner_html === next$1.inner_html;
+            let $3 = prev2.inner_html === next2.inner_html;
             if ($3) {
               _block$1 = child_changes;
             } else {
               _block$1 = prepend(
-                replace_inner_html(next$1.inner_html),
+                replace_inner_html(next2.inner_html),
                 child_changes
               );
             }
@@ -4211,21 +4185,15 @@ function do_diff(loop$old, loop$old_keyed, loop$new, loop$new_keyed, loop$moved,
             loop$mapper = mapper;
             loop$events = events$1;
           } else {
-            let prev$1 = $;
+            let prev2 = $;
             let old_remaining = old.tail;
-            let next$1 = $1;
+            let next2 = $1;
             let new_remaining = new$9.tail;
-            let change = replace2(node_index - moved_offset, next$1);
+            let change = replace2(node_index - moved_offset, next2);
             let _block;
             let _pipe = events;
-            let _pipe$1 = remove_child(_pipe, path, node_index, prev$1);
-            _block = add_child(
-              _pipe$1,
-              mapper,
-              path,
-              node_index,
-              next$1
-            );
+            let _pipe$1 = remove_child(_pipe, path, node_index, prev2);
+            _block = add_child(_pipe$1, mapper, path, node_index, next2);
             let events$1 = _block;
             loop$old = old_remaining;
             loop$old_keyed = old_keyed;
@@ -5258,6 +5226,15 @@ var Uri = class extends CustomType {
     this.fragment = fragment3;
   }
 };
+var empty3 = /* @__PURE__ */ new Uri(
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  "",
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None()
+);
 function is_valid_host_within_brackets_char(char) {
   return 48 >= char && char <= 57 || 65 >= char && char <= 90 || 97 >= char && char <= 122 || char === 58 || char === 46;
 }
@@ -6021,15 +5998,6 @@ function to_string4(uri) {
   let parts$5 = _block$4;
   return concat2(parts$5);
 }
-var empty3 = /* @__PURE__ */ new Uri(
-  /* @__PURE__ */ new None(),
-  /* @__PURE__ */ new None(),
-  /* @__PURE__ */ new None(),
-  /* @__PURE__ */ new None(),
-  "",
-  /* @__PURE__ */ new None(),
-  /* @__PURE__ */ new None()
-);
 function parse(uri_string) {
   return parse_scheme_loop(uri_string, uri_string, empty3, 0);
 }
@@ -6352,8 +6320,8 @@ function expect_ok_response(handler) {
             if (code >= 200 && code < 300) {
               return new Ok(response);
             } else {
-              let code$1 = $;
-              if (code$1 >= 400 && code$1 < 600) {
+              let code2 = $;
+              if (code2 >= 400 && code2 < 600) {
                 return new Error(new HttpError(response));
               } else {
                 return new Error(new UnhandledResponse(response));
