@@ -48,11 +48,11 @@ fn get_options_from_chars(
     let bank_chars = get_first_five_chars_from_string(bank_word)
     case bank_chars {
       Ok(#(bank_a, bank_b, bank_c, bank_d, bank_e)) -> {
-        is_same_or_underscore(a, bank_a)
-        && is_same_or_underscore(b, bank_b)
-        && is_same_or_underscore(c, bank_c)
-        && is_same_or_underscore(d, bank_d)
-        && is_same_or_underscore(e, bank_e)
+        is_same_or_wildcard(a, bank_a)
+        && is_same_or_wildcard(b, bank_b)
+        && is_same_or_wildcard(c, bank_c)
+        && is_same_or_wildcard(d, bank_d)
+        && is_same_or_wildcard(e, bank_e)
         && !list.any(unused_letters, fn(letter) {
           string.contains(bank_word, letter)
         })
@@ -62,12 +62,9 @@ fn get_options_from_chars(
   })
 }
 
-fn is_same_or_underscore(
-  possible_underscore_char: String,
-  char_2: String,
-) -> Bool {
-  case possible_underscore_char {
-    "_" -> True
+fn is_same_or_wildcard(possible_wildcard_char: String, char_2: String) -> Bool {
+  case possible_wildcard_char {
+    "-" -> True
     char -> char == char_2
   }
 }

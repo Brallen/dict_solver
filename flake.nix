@@ -7,8 +7,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, flake-utils }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixpkgs-unstable,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         unstable = nixpkgs-unstable.legacyPackages.${system};
@@ -17,9 +24,10 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             unstable.gleam
+            tree-sitter
             erlang
             rebar3 # For erlang
-	    inotify-tools # For file watching
+            inotify-tools # For file watching
           ];
 
           shellHook = ''

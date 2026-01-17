@@ -9,8 +9,8 @@ The Invalid Letters input is for letters that are black (aka not in the solution
 
 ## Examples for Wordle Letters input:
 
-`___a_`: I only know that there is an 'a' in the second to last position
+`---a-`: I only know that there is an 'a' in the second to last position
 
-`sho_t`: I don't know the letter in the second to last position but the rest are green.
+`sho-t`: I don't know the letter in the second to last position but the rest are green.
 
 This does not deal with yellow letters.

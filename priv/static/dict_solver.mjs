@@ -6506,11 +6506,11 @@ function get_list_of_chars_from_string(loop$value, loop$list) {
     }
   }
 }
-function is_same_or_underscore(possible_underscore_char, char_2) {
-  if (possible_underscore_char === "_") {
+function is_same_or_wildcard(possible_wildcard_char, char_2) {
+  if (possible_wildcard_char === "-") {
     return true;
   } else {
-    let char = possible_underscore_char;
+    let char = possible_wildcard_char;
     return char === char_2;
   }
 }
@@ -6535,13 +6535,13 @@ function get_options_from_chars(chars, bank, unused_letters) {
         let bank_c = bank_chars[0][2];
         let bank_d = bank_chars[0][3];
         let bank_e = bank_chars[0][4];
-        return is_same_or_underscore(a, bank_a) && is_same_or_underscore(
+        return is_same_or_wildcard(a, bank_a) && is_same_or_wildcard(
           b,
           bank_b
-        ) && is_same_or_underscore(c, bank_c) && is_same_or_underscore(
-          d,
-          bank_d
-        ) && is_same_or_underscore(e, bank_e) && !any(
+        ) && is_same_or_wildcard(c, bank_c) && is_same_or_wildcard(d, bank_d) && is_same_or_wildcard(
+          e,
+          bank_e
+        ) && !any(
           unused_letters,
           (letter) => {
             return contains_string(bank_word, letter);
